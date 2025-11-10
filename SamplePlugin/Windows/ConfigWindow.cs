@@ -12,12 +12,12 @@ public class ConfigWindow : Window, IDisposable
     // We give this window a constant ID using ###.
     // This allows for labels to be dynamic, like "{FPS Counter}fps###XYZ counter window",
     // and the window ID will always be "###XYZ counter window" for ImGui
-    public ConfigWindow(Plugin plugin) : base("A Wonderful Configuration Window###With a constant ID")
+    public ConfigWindow(Plugin plugin) : base("Saucer Shoutouts Configuration###With a constant ID")
     {
         Flags = ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar |
                 ImGuiWindowFlags.NoScrollWithMouse;
 
-        Size = new Vector2(232, 90);
+        Size = new Vector2(350, 200);
         SizeCondition = ImGuiCond.Always;
 
         configuration = plugin.Configuration;
@@ -40,17 +40,44 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
-        // Can't ref a property, so use a local copy
-        var configValue = configuration.SomePropertyToBeSavedAndWithADefault;
-        if (ImGui.Checkbox("Random Config Bool", ref configValue))
+        ImGui.TextUnformatted("Event Tracking Settings");
+        ImGui.Separator();
+        ImGui.Spacing();
+
+        var enableGoldSaucer = configuration.EnableGoldSaucerNotifications;
+        if (ImGui.Checkbox("Enable Gold Saucer GATE tracking", ref enableGoldSaucer))
         {
-            configuration.SomePropertyToBeSavedAndWithADefault = configValue;
-            // Can save immediately on change if you don't want to provide a "Save and Close" button
+            configuration.EnableGoldSaucerNotifications = enableGoldSaucer;
+            configuration.Save();
+        }
+
+        var enableCosmicExploration = configuration.EnableCosmicExplorationNotifications;
+        if (ImGui.Checkbox("Enable Cosmic Exploration alerts", ref enableCosmicExploration))
+        {
+            configuration.EnableCosmicExplorationNotifications = enableCosmicExploration;
+            configuration.Save();
+        }
+
+        var enableFirmamentFete = configuration.EnableFirmamentFeteNotifications;
+        if (ImGui.Checkbox("Enable Firmament Fête tracking", ref enableFirmamentFete))
+        {
+            configuration.EnableFirmamentFeteNotifications = enableFirmamentFete;
+            configuration.Save();
+        }
+
+        ImGui.Spacing();
+        ImGui.Separator();
+        ImGui.Spacing();
+
+        var showOnStartup = configuration.ShowMainWindowOnStartup;
+        if (ImGui.Checkbox("Show window on startup", ref showOnStartup))
+        {
+            configuration.ShowMainWindowOnStartup = showOnStartup;
             configuration.Save();
         }
 
         var movable = configuration.IsConfigWindowMovable;
-        if (ImGui.Checkbox("Movable Config Window", ref movable))
+        if (ImGui.Checkbox("Movable config window", ref movable))
         {
             configuration.IsConfigWindowMovable = movable;
             configuration.Save();

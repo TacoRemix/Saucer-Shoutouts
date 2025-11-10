@@ -1,12 +1,16 @@
 {
-  "Author": "your name here",
-  "Name": "Sample Plugin",
-  "Punchline": "A short one-liner that shows up in /xlplugins.",
-  "Description": "A description that shows up in /xlplugins. List any major slash-command(s).",
+  "Author": "TacoRemix",
+  "Name": "Saucer Shoutouts",
+  "Punchline": "Track Gold Saucer GATEs, Cosmic Exploration alerts, and Firmament Fêtes",
+  "Description": "Monitors chat to track Gold Saucer GATE timings (every 20 minutes), Cosmic Exploration Red Alerts, and Firmament Fête events. Use /saucershout to view event timings.",
   "ApplicableVersion": "any",
   "Tags": [
-    "sample",
-    "plugin",
-    "goats"
+    "gold saucer",
+    "gate",
+    "cosmic exploration",
+    "firmament",
+    "fete",
+    "events",
+    "tracker"
   ]
 }

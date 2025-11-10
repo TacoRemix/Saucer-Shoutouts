@@ -14,10 +14,10 @@ public class MainWindow : Window, IDisposable
     private readonly Plugin plugin;
 
     // We give this window a hidden ID using ##.
-    // The user will see "My Amazing Window" as window title,
-    // but for ImGui the ID is "My Amazing Window##With a hidden ID"
+    // The user will see "Saucer Shoutouts" as window title,
+    // but for ImGui the ID is "Saucer Shoutouts##With a hidden ID"
     public MainWindow(Plugin plugin, string goatImagePath)
-        : base("My Amazing Window##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+        : base("Saucer Shoutouts##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         SizeConstraints = new WindowSizeConstraints
         {
@@ -33,7 +33,66 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
-        ImGui.TextUnformatted($"The random config bool is {plugin.Configuration.SomePropertyToBeSavedAndWithADefault}");
+        ImGui.TextUnformatted("Gold Saucer & Event Tracker");
+        ImGui.Separator();
+
+        // Gold Saucer GATE Timer
+        if (plugin.Configuration.EnableGoldSaucerNotifications)
+        {
+            ImGui.TextColored(new Vector4(1.0f, 0.84f, 0.0f, 1.0f), "Gold Saucer GATE");
+            var timeUntilNextGate = plugin.EventTracker.GetTimeUntilNextGoldSaucerGate();
+            var nextGateTime = plugin.EventTracker.GetNextGoldSaucerGateTime();
+            
+            ImGui.TextUnformatted($"Next GATE in: {timeUntilNextGate.Minutes:D2}:{timeUntilNextGate.Seconds:D2}");
+            ImGui.TextUnformatted($"Next GATE at: {nextGateTime.ToLocalTime():HH:mm:ss}");
+            
+            if (plugin.EventTracker.LastGoldSaucerGateTime.HasValue)
+            {
+                ImGui.TextUnformatted($"Last detected: {plugin.EventTracker.LastGoldSaucerGateTime.Value.ToLocalTime():HH:mm:ss}");
+            }
+            ImGui.Spacing();
+        }
+
+        // Cosmic Exploration Red Alerts
+        if (plugin.Configuration.EnableCosmicExplorationNotifications)
+        {
+            ImGui.TextColored(new Vector4(1.0f, 0.2f, 0.2f, 1.0f), "Cosmic Exploration Red Alerts");
+            var alertCount = plugin.EventTracker.GetCosmicExplorationRedAlertCount();
+            ImGui.TextUnformatted($"Total alerts tracked: {alertCount}");
+            
+            var lastAlert = plugin.EventTracker.GetLastCosmicExplorationRedAlert();
+            if (lastAlert.HasValue)
+            {
+                var timeSinceLastAlert = DateTime.UtcNow - lastAlert.Value;
+                ImGui.TextUnformatted($"Last alert: {timeSinceLastAlert.TotalMinutes:F1} minutes ago");
+                ImGui.TextUnformatted($"Time: {lastAlert.Value.ToLocalTime():HH:mm:ss}");
+            }
+            else
+            {
+                ImGui.TextUnformatted("No alerts detected yet");
+            }
+            ImGui.Spacing();
+        }
+
+        // Firmament Fete
+        if (plugin.Configuration.EnableFirmamentFeteNotifications)
+        {
+            ImGui.TextColored(new Vector4(0.5f, 0.8f, 1.0f, 1.0f), "Firmament Fête");
+            if (plugin.EventTracker.LastFirmamentFeteTime.HasValue)
+            {
+                var timeSinceFete = DateTime.UtcNow - plugin.EventTracker.LastFirmamentFeteTime.Value;
+                ImGui.TextUnformatted($"Last Fête: {timeSinceFete.TotalMinutes:F1} minutes ago");
+                ImGui.TextUnformatted($"Time: {plugin.EventTracker.LastFirmamentFeteTime.Value.ToLocalTime():HH:mm:ss}");
+            }
+            else
+            {
+                ImGui.TextUnformatted("No Fête detected yet");
+                ImGui.TextUnformatted("Fête schedule is server-specific");
+            }
+            ImGui.Spacing();
+        }
+
+        ImGui.Separator();
 
         if (ImGui.Button("Show Settings"))
         {
@@ -45,24 +104,24 @@ public class MainWindow : Window, IDisposable
         // Normally a BeginChild() would have to be followed by an unconditional EndChild(),
         // ImRaii takes care of this after the scope ends.
         // This works for all ImGui functions that require specific handling, examples are BeginTable() or Indent().
-        using (var child = ImRaii.Child("SomeChildWithAScrollbar", Vector2.Zero, true))
+        using (var child = ImRaii.Child("EventLog", Vector2.Zero, true))
         {
             // Check if this child is drawing
             if (child.Success)
             {
-                ImGui.TextUnformatted("Have a goat:");
-                var goatImage = Plugin.TextureProvider.GetFromFile(goatImagePath).GetWrapOrDefault();
-                if (goatImage != null)
-                {
-                    using (ImRaii.PushIndent(55f))
-                    {
-                        ImGui.Image(goatImage.Handle, goatImage.Size);
-                    }
-                }
-                else
-                {
-                    ImGui.TextUnformatted("Image not found.");
-                }
+                ImGui.TextUnformatted("Event Detection Info:");
+                ImGui.Spacing();
+                
+                ImGui.TextUnformatted("This plugin monitors chat messages to detect:");
+                ImGui.BulletText("Gold Saucer GATE announcements (every 20 mins)");
+                ImGui.BulletText("Cosmic Exploration Red Alerts");
+                ImGui.BulletText("Firmament Fête announcements");
+                
+                ImGui.Spacing();
+                ImGui.TextUnformatted("Tips:");
+                ImGui.BulletText("Talk to gatekeepers in Gold Saucer for GATE info");
+                ImGui.BulletText("GATEs occur at :00, :20, and :40 past each hour");
+                ImGui.BulletText("Events are tracked when mentioned in chat");
 
                 ImGuiHelpers.ScaledDummy(20.0f);
 
@@ -83,13 +142,13 @@ public class MainWindow : Window, IDisposable
                 }
 
                 // If you want to see the Macro representation of this SeString use `ToMacroString()`
-                ImGui.TextUnformatted($"Our current job is ({localPlayer.ClassJob.RowId}) \"{localPlayer.ClassJob.Value.Abbreviation}\"");
+                ImGui.TextUnformatted($"Current job: ({localPlayer.ClassJob.RowId}) \"{localPlayer.ClassJob.Value.Abbreviation}\"");
 
                 // Example for quarrying Lumina directly, getting the name of our current area.
                 var territoryId = Plugin.ClientState.TerritoryType;
                 if (Plugin.DataManager.GetExcelSheet<TerritoryType>().TryGetRow(territoryId, out var territoryRow))
                 {
-                    ImGui.TextUnformatted($"We are currently in ({territoryId}) \"{territoryRow.PlaceName.Value.Name}\"");
+                    ImGui.TextUnformatted($"Current location: ({territoryId}) \"{territoryRow.PlaceName.Value.Name}\"");
                 }
                 else
                 {
