@@ -1,0 +1,10 @@
+{
+  "Author": "TacoRemix",
+  "Name": "Saucer Shoutouts",
+  "InternalName": "SaucerShoutouts",
+  "Punchline": "Shoutouts/timers for Gold Saucer, Fêtes, and Cosmic Exploration red alerts.",
+  "Description": "FFXIV Dalamud plugin for shoutouts and timers.",
+  "RepoUrl": "https://github.com/TacoRemix/Saucer-Shoutouts",
+  "Tags": [ "ffxiv", "dalamud", "gold saucer", "fete", "cosmic", "alerts" ],
+  "DalamudApiLevel": 10
+}
