@@ -154,27 +154,33 @@ public class EventTracker : IDisposable
     {
         var now = DateTime.UtcNow;
         var currentMinute = now.Minute;
-        var currentHour = now.Hour;
         
         // Find the next GATE time (:00, :20, or :40)
         int nextMinute;
         int hourOffset = 0;
         
-        if (currentMinute < 20)
+        if (currentMinute >= 40)
         {
-            nextMinute = 20;
+            // Next GATE is at the top of the next hour
+            nextMinute = 0;
+            hourOffset = 1;
         }
-        else if (currentMinute < 40)
+        else if (currentMinute >= 20)
         {
             nextMinute = 40;
         }
+        else if (currentMinute >= 0)
+        {
+            nextMinute = 20;
+        }
         else
         {
+            // Fallback (should never reach here)
             nextMinute = 0;
             hourOffset = 1;
         }
         
-        var nextGateTime = new DateTime(now.Year, now.Month, now.Day, currentHour, nextMinute, 0, DateTimeKind.Utc)
+        var nextGateTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, nextMinute, 0, DateTimeKind.Utc)
             .AddHours(hourOffset);
         
         return nextGateTime;
