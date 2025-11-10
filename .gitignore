@@ -1,4 +1,13 @@
-.vs/
-obj/
+# .NET build
 bin/
+obj/
 *.user
+*.suo
+.vs/
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Packaging artifacts
+*.zip

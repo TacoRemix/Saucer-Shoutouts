@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Path to Dalamud dev libraries installed by XIVLauncher -->
+    <DalamudLibPath>$(AppData)\XIVLauncher\addon\Hooks\dev</DalamudLibPath>
+  </PropertyGroup>
+</Project>
